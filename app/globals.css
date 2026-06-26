@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   ДИЗАЙН-ТОКЕНЫ (Tailwind v4, CSS-first @theme)
+   Зеркало в lib/design-tokens.ts для JS/анимаций.
+   ───────────────────────────────────────────── */
+@theme {
+  /* Цвет — тёмная база, один акцент */
+  --color-ink: #0a0a0b;
+  --color-surface: #141416;
+  --color-line: #26262b;
+  --color-fog: #f3f2ef;
+  --color-mute: #8b8b93;
+  --color-accent: #ff5a30;
+
+  /* Шрифты (CSS-переменные подставляет next/font в layout) */
+  --font-display: var(--font-unbounded), system-ui, sans-serif;
+  --font-sans: var(--font-onest), system-ui, sans-serif;
+
+  /* Типографическая шкала (clamp — адаптив без брейкпоинтов) */
+  --text-hero: clamp(2.75rem, 9vw, 9.5rem);
+  --text-hero--line-height: 0.94;
+  --text-display: clamp(2rem, 5.2vw, 4.75rem);
+  --text-display--line-height: 1;
+  --text-h2: clamp(1.6rem, 3.4vw, 3rem);
+  --text-h2--line-height: 1.05;
+  --text-lead: clamp(1.1rem, 1.6vw, 1.5rem);
+
+  /* Воздух между секциями */
+  --spacing-section: clamp(6rem, 12vw, 12rem);
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+/* ───────── База ───────── */
+:root {
+  color-scheme: dark;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-fog);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/* Тонкий скроллбар в тон */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-ink); }
+::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 99px; }
+
+/* ───────── Lenis (плавный скролл) ───────── */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ───────── Кастомный курсор ───────── */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--color-accent);
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+/* Прячем системный курсор только на «точных» устройствах с включённым кастомным */
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * { cursor: none; }
+}
+
+/* ───────── Утилиты ───────── */
+.text-balance { text-wrap: balance; }
+.text-pretty { text-wrap: pretty; }
+
+/* Тонкая «плёнка» поверх фона — лёгкая глубина без стоковых градиентов */
+.grain-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: radial-gradient(var(--color-fog) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+}
+
+/* ───────── prefers-reduced-motion ───────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cursor-dot { display: none !important; }
+}
